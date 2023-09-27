@@ -1,33 +1,17 @@
 #ifndef VIPERFISH_REPTOID_HPP
 #define VIPERFISH_REPTOID_HPP
 #include <unordered_map>
-#include "market/orderbook/orderbook.hpp"
+#include "market/orderbook/large/consumer.hpp"
 
 namespace viperfish::reptoid {
-
-    namespace orderbook {
-        class Snapshots {
-        public:
-            typedef std::unordered_map<std::string, market::orderbook::OrderBook> ob_map_t;
-
-            ob_map_t ob_map;
-
-            Snapshots(const ob_map_t&);
-        };
-
-        class Diffs {
-        public:
-            Diffs();
-        };
-    }
 
     class Api {
     public:
         Api();
         virtual ~Api();
 
-        virtual orderbook::Snapshots get_snapshots();
-        virtual orderbook::Diffs get_ob_diffs_tail(std::int64_t ts_from, std::int64_t ts_to);
+        virtual market::orderbook::large::Snapshots get_snapshots();
+        virtual market::orderbook::large::ObDiffsTail get_ob_diffs_tail(std::int64_t ts_from, std::int64_t ts_to);
 
     protected:
         virtual void update_endpoints();

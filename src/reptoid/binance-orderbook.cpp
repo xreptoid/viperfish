@@ -77,6 +77,6 @@ namespace viperfish::reptoid {
         for (const auto& o: data["a"]) {
             ob_diff.put_order(market::SELL, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
         }
-        this->consumer->on_ob_diff(ob_diff);
+        this->consumer->push_ob_diff(ob_diff);
     }
 }

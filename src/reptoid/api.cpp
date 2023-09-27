@@ -11,7 +11,10 @@ namespace viperfish::reptoid {
 
     Api::~Api() {}
 
-    orderbook::Snapshots Api::get_snapshots() {
+    void Api::update_endpoints() {
+    }
+
+    market::orderbook::large::Snapshots Api::get_snapshots() {
         auto result_url = json::parse(network::http::request_get("https://api-ob.reptoid.com/ob-snapshots3/").buf)["data"]["result-url"].get<std::string>();
         std::cout << "result-url " << result_url << std::endl;
         auto resp = network::http::request_get(result_url);
@@ -19,7 +22,7 @@ namespace viperfish::reptoid {
         std::string decompressed_data = gzip::decompress(resp.buf.c_str(), resp.buf.size());
         auto data = json::parse(decompressed_data);
 
-        orderbook::Snapshots::ob_map_t snapshots;
+        market::orderbook::large::Snapshots::ob_map_t snapshots;
         for (const auto& [symbol, snapshot_data]: data.items()) {
             auto snapshot = market::orderbook::OrderBook(
                 symbol,
@@ -35,10 +38,10 @@ namespace viperfish::reptoid {
 
             snapshots.insert(std::make_pair(symbol, snapshot));
         }
-        return orderbook::Snapshots(snapshots);
+        return market::orderbook::large::Snapshots(snapshots);
     }
 
-    orderbook::Diffs Api::get_ob_diffs_tail(std::int64_t ts_from, std::int64_t ts_to) {
+    market::orderbook::large::ObDiffsTail Api::get_ob_diffs_tail(std::int64_t ts_from, std::int64_t ts_to) {
         auto data = json::parse(
             network::http::request_get("https://api-ob.reptoid.com/diffs/",
             network::http::QueryString({
@@ -55,16 +58,21 @@ namespace viperfish::reptoid {
         auto diffs_s = split_string(decompressed_data, '\n');
         std::vector<json> diffs;
         std::cout << "parsing diffs" << std::endl;
+        std::vector<market::orderbook::OrderBookDiff> ob_diffs;
         for (const auto& diff_s: diffs_s) {
             if (!diff_s.size()) {
                 continue;
             }
-            diffs.push_back(json::parse(diff_s));
+            auto ob_diff_data = json::parse(diff_s);
+            market::orderbook::OrderBookDiff ob_diff(json_field_get<std::string>(ob_diff_data, "s"));
+            for (const auto& o: ob_diff_data["b"]) {
+                ob_diff.put_order(market::BUY, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
+            }
+            for (const auto& o: ob_diff_data["a"]) {
+                ob_diff.put_order(market::SELL, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
+            }        
+            ob_diffs.push_back(ob_diff);
         }
-        //return diffs;
-        return orderbook::Diffs();
-    }
-
-    void Api::update_endpoints() {
+        return market::orderbook::large::ObDiffsTail(ob_diffs);
     }
 }
