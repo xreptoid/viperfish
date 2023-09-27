@@ -132,8 +132,8 @@ namespace viperfish::binance {
             if (!settings.on_obt_callbacks.empty()) {
                 auto obt = market::OrderBookTop::create(
                         obj["data"]["s"],
-                        market::order_book::Order::create(obj["data"]["b"], std::stod(obj["data"]["B"].get<std::string>())),
-                        market::order_book::Order::create(obj["data"]["a"], std::stod(obj["data"]["A"].get<std::string>())),
+                        market::orderbook::Order::create(obj["data"]["b"], std::stod(obj["data"]["B"].get<std::string>())),
+                        market::orderbook::Order::create(obj["data"]["a"], std::stod(obj["data"]["A"].get<std::string>())),
                         init_ts,
                         obj["data"]["u"]
                 );

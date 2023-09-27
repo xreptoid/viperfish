@@ -44,6 +44,7 @@ file(
         ../../src/network/ws/ws_boost.cpp
         ../../src/numbers/*.cpp
         ../../src/performance/*.cpp
+        ../../src/reptoid/*.cpp
         ../../src/utils/*.cpp
         ../../src/timestamp.cpp
         ../../src/strings.cpp

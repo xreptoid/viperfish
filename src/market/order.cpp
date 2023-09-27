@@ -1,5 +1,4 @@
-#include "market/order.hpp"
-
+#include "./order.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -23,7 +22,7 @@ namespace viperfish::market {
         throw std::runtime_error("Invalid side '" + side + "'");
     }
 
-    namespace order_book {
+    namespace orderbook {
         Order Order::create(const std::string& sprice, amount_t amount) {
             fprice_t fprice;
             if (sprice.find('.') != std::string::npos && sprice.back() == '0') {

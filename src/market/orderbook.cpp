@@ -1,10 +1,8 @@
-#include "market/order_book.hpp"
-
+#include "./orderbook.hpp"
 #include <cmath>
 #include <iostream>
 
-
-namespace viperfish::market::order_book {
+namespace viperfish::market::orderbook {
 
     void OrderBookSide::put(const Order& order) {
         auto old_it = sprice2order.find(order.sprice);

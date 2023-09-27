@@ -13,7 +13,7 @@
 #include "./order.hpp"
 #include "./obt.hpp"
 
-namespace viperfish::market::order_book {
+namespace viperfish::market::orderbook {
 
     class OrderBookSide {
     public:

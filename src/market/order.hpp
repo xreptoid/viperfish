@@ -15,7 +15,7 @@ namespace viperfish::market {
     std::string order_side2str(OrderSide);
     OrderSide str2order_side(const std::string&);
 
-    namespace order_book {
+    namespace orderbook {
 
         typedef long double fprice_t;
         typedef long double amount_t;

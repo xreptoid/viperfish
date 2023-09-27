@@ -9,7 +9,7 @@
 #include "./order.hpp"
 
 
-namespace viperfish::market::order_book {
+namespace viperfish::market::orderbook {
 
     class OrderBookTop {
     public:
@@ -65,7 +65,7 @@ namespace viperfish::market::order_book {
 
 namespace viperfish::market {
 
-    typedef order_book::OrderBookTop OrderBookTop;
+    typedef orderbook::OrderBookTop OrderBookTop;
 }
 
 #endif 

@@ -1,7 +1,7 @@
 #include "market/obt.hpp"
 
 
-namespace viperfish::market::order_book {
+namespace viperfish::market::orderbook {
 
     OrderBookTop OrderBookTop::create(
         const std::string& symbol,

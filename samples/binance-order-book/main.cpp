@@ -5,8 +5,8 @@
 #include "timestamp.hpp"
 #include "network/http/http.hpp"
 #include "gzip/decompress.hpp"
-#include "market/order_book.hpp"
-    
+#include "market/orderbook.hpp"
+#include "reptoid/api.hpp"
 
 using namespace viperfish;
 
@@ -52,20 +52,20 @@ SnapshotsUrls get_snapshots_urls() {
 }
 
 
-market::order_book::OrderBook get_snapshot(const std::string& symbol) {
+market::orderbook::OrderBook get_snapshot(const std::string& symbol) {
     auto data = json::parse(network::http::request_get(get_snapshots_urls()[symbol]).buf);
-    auto ob = market::order_book::OrderBook();
+    auto ob = market::orderbook::OrderBook();
     for (const auto& o: data["bids"]) {
-        ob.put_order(market::BUY, market::order_book::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
+        ob.put_order(market::BUY, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
     }
     for (const auto& o: data["asks"]) {
-        ob.put_order(market::SELL, market::order_book::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
+        ob.put_order(market::SELL, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
     }
     return ob;
 }
 
 
-std::unordered_map<std::string, market::order_book::OrderBook> get_all_snapshots() {
+std::unordered_map<std::string, market::orderbook::OrderBook> get_all_snapshots() {
     auto result_url = json::parse(network::http::request_get("https://api-ob.reptoid.com/ob-snapshots3/").buf)["data"]["result-url"].get<std::string>();
     std::cout << "result-url " << result_url << std::endl;
     auto resp = network::http::request_get(result_url);
@@ -73,18 +73,18 @@ std::unordered_map<std::string, market::order_book::OrderBook> get_all_snapshots
     std::string decompressed_data = gzip::decompress(resp.buf.c_str(), resp.buf.size());
     auto data = json::parse(decompressed_data);
 
-    std::unordered_map<std::string, market::order_book::OrderBook> snapshots;
+    std::unordered_map<std::string, market::orderbook::OrderBook> snapshots;
     for (const auto& [symbol, snapshot_data]: data.items()) {
-        auto snapshot = market::order_book::OrderBook(
+        auto snapshot = market::orderbook::OrderBook(
             symbol,
             snapshot_data["ob_snapshot"]["lastUpdateId"].get<std::int64_t>(),
             snapshot_data["local_ts_before"].get<std::int64_t>()
         );
         for (const auto& o: snapshot_data["ob_snapshot"]["bids"]) {
-            snapshot.put_order(market::BUY, market::order_book::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
+            snapshot.put_order(market::BUY, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
         }
         for (const auto& o: snapshot_data["ob_snapshot"]["asks"]) {
-            snapshot.put_order(market::SELL, market::order_book::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
+            snapshot.put_order(market::SELL, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
         }
 
         snapshots.insert(std::make_pair(symbol, snapshot));
@@ -131,23 +131,30 @@ int main() {
 
     auto data = request_get(get_snapshots_urls()[symbol]);
     auto lastUpdateId = data["lastUpdateId"].get<std::uint64_t>();
-    auto ob = market::order_book::OrderBook();
+    auto ob = market::orderbook::OrderBook();
     for (const auto& o: data["bids"]) {
-        ob.put_order(market::BUY, market::order_book::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
+        ob.put_order(market::BUY, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
     }
     for (const auto& o: data["asks"]) {
-        ob.put_order(market::SELL, market::order_book::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
+        ob.put_order(market::SELL, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
     }
     */
 
+    /*
     auto snapshots = get_all_snapshots();
     std::cout << "snapshots: " << snapshots.size() << std::endl;
 
     auto diffs = get_ob_diffs(symbol, get_current_ts() - 7 * 60 * 1000, get_current_ts() - 2 * 1000);
     std::cout << "diffs: " << diffs.size() << std::endl;
+    */
+
+
+    auto api = reptoid::Api();
 
 
     //delete consumer;
+
+
 
     return 0;
 }
