@@ -1,12 +1,12 @@
 #include <string>
-#include "viperfish/binance/consumer.hpp"
-#include "viperfish/strings.hpp"
-#include "viperfish/json.hpp"
-#include "viperfish/timestamp.hpp"
-#include "viperfish/network/http/http.hpp"
-#include "viperfish/gzip/decompress.hpp"
-#include "viperfish/market/order_book.hpp"
-
+#include "binance/consumer.hpp"
+#include "strings.hpp"
+#include "json.hpp"
+#include "timestamp.hpp"
+#include "network/http/http.hpp"
+#include "gzip/decompress.hpp"
+#include "market/order_book.hpp"
+    
 
 using namespace viperfish;
 

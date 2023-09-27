@@ -11,12 +11,12 @@
 #include <functional>
 #include <optional>
 
-#include "viperfish/json.hpp"
-#include "viperfish/network/ws.hpp"
+#include "json.hpp"
+#include "network/ws.hpp"
 #include "./mode.hpp"
-#include "viperfish/market/obt.hpp"
-#include "viperfish/utils/name_mixture.hpp"
-#include "viperfish/performance.hpp"
+#include "market/obt.hpp"
+#include "utils/name_mixture.hpp"
+#include "performance.hpp"
 
 namespace viperfish::binance {
 

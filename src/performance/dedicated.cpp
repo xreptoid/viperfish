@@ -1,4 +1,4 @@
-#include "viperfish/performance/dedicated.hpp"
+#include "performance/dedicated.hpp"
 
 
 namespace viperfish::performance {

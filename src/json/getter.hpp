@@ -6,7 +6,7 @@
 #   define _GNU_SOURCE 
 #endif 
 #include <boost/stacktrace.hpp>
-#include "viperfish/json/json_obj.hpp"
+#include "json/json_obj.hpp"
 
 namespace viperfish {
 

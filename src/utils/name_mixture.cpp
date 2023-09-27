@@ -1,8 +1,8 @@
-#include "viperfish/utils/name_mixture.hpp"
+#include "utils/name_mixture.hpp"
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include "viperfish/timestamp.hpp"
+#include "timestamp.hpp"
 
 namespace viperfish::utils {
 

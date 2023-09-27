@@ -1,7 +1,7 @@
 #ifndef VIPERFISH_STRINGS_CPP_
 #define VIPERFISH_STRINGS_CPP_
 
-#include "viperfish/strings.hpp"
+#include "strings.hpp"
 
 
 #include <vector>

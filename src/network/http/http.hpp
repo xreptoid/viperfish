@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "http_base.hpp"
-#include "viperfish/json.hpp"
+#include "json.hpp"
 
 namespace viperfish::network::http {
 

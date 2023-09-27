@@ -1,4 +1,4 @@
-#include "viperfish/binance/consumer.hpp"
+#include "binance/consumer.hpp"
 
 #include <thread>
 #include <chrono>
@@ -7,11 +7,11 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "viperfish/network/ws.hpp"
-#include "viperfish/network/sockets.hpp"
-#include "viperfish/json.hpp"
-#include "viperfish/strings.hpp"
-#include "viperfish/timestamp.hpp"
+#include "network/ws.hpp"
+#include "network/sockets.hpp"
+#include "json.hpp"
+#include "strings.hpp"
+#include "timestamp.hpp"
 
 
 namespace viperfish::binance {

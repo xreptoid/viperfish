@@ -1,5 +1,5 @@
-#include "viperfish/network/ws_server.hpp"
-#include "viperfish/network/ws_server_body.hpp"
+#include "network/ws_server.hpp"
+#include "network/ws_server_body.hpp"
 
 namespace viperfish::network {
 

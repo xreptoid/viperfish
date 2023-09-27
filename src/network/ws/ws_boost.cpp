@@ -1,4 +1,4 @@
-#include "viperfish/network/ws.hpp"
+#include "network/ws.hpp"
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/ssl.hpp>
@@ -13,7 +13,7 @@
 #include <thread>
 #include <chrono>
 
-#include "viperfish/network/sockets.hpp"
+#include "network/sockets.hpp"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>

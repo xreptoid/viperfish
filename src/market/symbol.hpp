@@ -3,7 +3,7 @@
 
 #include <string>
 #include <utility>
-#include "viperfish/strings.hpp"
+#include "strings.hpp"
 
 namespace viperfish::market {
 

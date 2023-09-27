@@ -1,5 +1,5 @@
-#include "viperfish/binance/consumer.hpp"
-#include "viperfish/timestamp.hpp"
+#include "binance/consumer.hpp"
+#include "timestamp.hpp"
 
 namespace viperfish::binance {
 

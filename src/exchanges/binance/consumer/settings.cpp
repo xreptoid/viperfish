@@ -1,4 +1,4 @@
-#include "viperfish/binance/consumer.hpp"
+#include "binance/consumer.hpp"
 
 
 namespace viperfish::binance {

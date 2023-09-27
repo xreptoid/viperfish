@@ -1,4 +1,4 @@
-#include "viperfish/network/sockets.hpp"
+#include "network/sockets.hpp"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <net/if.h>

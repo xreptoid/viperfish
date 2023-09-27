@@ -14,7 +14,7 @@
 #include <thread>
 #include <mutex>
 
-#include "viperfish/utils/name_mixture.hpp"
+#include "utils/name_mixture.hpp"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>

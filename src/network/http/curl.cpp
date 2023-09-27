@@ -1,6 +1,6 @@
 #ifndef VIPERFISH_CURL_CPP_
 #define VIPERFISH_CURL_CPP_
-#include "viperfish/network/http/http.hpp"
+#include "network/http/http.hpp"
 #include <iostream>
 #include <string>
 #include <curl/curl.h>

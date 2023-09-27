@@ -1,4 +1,4 @@
-#include "viperfish/performance/cpu.hpp"
+#include "performance/cpu.hpp"
 
 #include <sched.h>
 

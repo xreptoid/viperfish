@@ -4,10 +4,10 @@
 #include <string>
 #include <optional>
 #include <unordered_map>
-#include "viperfish/json.hpp"
-#include "viperfish/numbers.hpp"
-#include "viperfish/market/symbol.hpp"
-#include "viperfish/timestamp.hpp"
+#include "json.hpp"
+#include "numbers.hpp"
+#include "market/symbol.hpp"
+#include "timestamp.hpp"
 #include "./mode.hpp"
 
 namespace viperfish::binance {

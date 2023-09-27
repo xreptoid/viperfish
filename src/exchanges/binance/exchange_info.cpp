@@ -1,4 +1,4 @@
-#include "viperfish/binance/exchange_info.hpp"
+#include "binance/exchange_info.hpp"
 #include <iostream>
 
 namespace viperfish::binance {

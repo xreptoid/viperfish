@@ -1,4 +1,4 @@
-#include <viperfish/gzip/config.hpp>
+#include <gzip/config.hpp>
 
 // zlib
 #include <zlib.h>

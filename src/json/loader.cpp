@@ -1,4 +1,4 @@
-#include "viperfish/json/loader.hpp"
+#include "json/loader.hpp"
 
 #include <fstream>
 #include <sstream>

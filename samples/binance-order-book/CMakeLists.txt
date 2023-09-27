@@ -7,6 +7,7 @@ endif()
 
 include_directories(
         ../../include
+        ../../src
         /usr/local/include
 )
 link_directories(

@@ -1,7 +1,7 @@
 #ifndef VIPERFISH_TIMESTAMP_CPP_
 #define VIPERFISH_TIMESTAMP_CPP_
 
-#include "viperfish/timestamp.hpp"
+#include "timestamp.hpp"
 #include <cmath>
 
 namespace viperfish {

@@ -1,10 +1,10 @@
 #ifndef VIPERFISH_CONNECTION_CONTEXT_CPP_
 #define VIPERFISH_CONNECTION_CONTEXT_CPP_
-#include "viperfish/network/http/http_base.hpp"
+#include "network/http/http_base.hpp"
 #include <string>
 #include <vector>
-#include "viperfish/json.hpp"
-#include "viperfish/strings.hpp"
+#include "json.hpp"
+#include "strings.hpp"
 
 namespace viperfish::network::http {
 

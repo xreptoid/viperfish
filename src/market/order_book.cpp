@@ -1,4 +1,4 @@
-#include "viperfish/market/order_book.hpp"
+#include "market/order_book.hpp"
 
 #include <cmath>
 #include <iostream>
