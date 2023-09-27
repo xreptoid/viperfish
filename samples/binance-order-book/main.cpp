@@ -6,7 +6,7 @@
 #include "network/http/http.hpp"
 #include "gzip/decompress.hpp"
 #include "market/orderbook/orderbook.hpp"
-#include "reptoid/api.hpp"
+#include "reptoid.hpp"
 
 using namespace viperfish;
 
@@ -149,7 +149,7 @@ int main() {
     */
 
 
-    auto api = reptoid::Api();
+    //auto api = reptoid::Api();
 
 
     //delete consumer;
