@@ -5,7 +5,7 @@
 #include "timestamp.hpp"
 #include "network/http/http.hpp"
 #include "gzip/decompress.hpp"
-#include "market/orderbook.hpp"
+#include "market/orderbook/orderbook.hpp"
 #include "reptoid/api.hpp"
 
 using namespace viperfish;

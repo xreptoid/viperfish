@@ -1,17 +1,16 @@
-#ifndef VIPERFISH_ORDER_BOOK_HPP
-#define VIPERFISH_ORDER_BOOK_HPP
-
+#ifndef VIPERFISH_ORDERBOOK_ORDERBOOK_HPP
+#define VIPERFISH_ORDERBOOK_ORDERBOOK_HPP
 #include <map>
 #include <thread>
 #include <mutex>
 #include <map>
 #include <unordered_map>
+#include <list>
 #include <optional>
 #include <vector>
-#include <list>
-
+#include "market/order.hpp"
 #include "./order.hpp"
-#include "./obt.hpp"
+#include "./top/obt.hpp"
 
 namespace viperfish::market::orderbook {
 

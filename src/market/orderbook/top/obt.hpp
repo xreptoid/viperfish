@@ -1,13 +1,10 @@
-#ifndef INCLUDE_VIPERFISH_MARKET_OBT_HPP
-#define INCLUDE_VIPERFISH_MARKET_OBT_HPP
-
+#ifndef VIPERFISH_MARKET_ORDERBOOK_OBT_HPP
+#define VIPERFISH_MARKET_ORDERBOOK_OBT_HPP
 #include <string>
 #include <optional>
-
 #include "json.hpp"
-
-#include "./order.hpp"
-
+#include "market/order.hpp"
+#include "market/orderbook/order.hpp"
 
 namespace viperfish::market::orderbook {
 

@@ -1,7 +1,7 @@
 #ifndef VIPERFISH_REPTOID_HPP
 #define VIPERFISH_REPTOID_HPP
 #include <unordered_map>
-#include "market/orderbook.hpp"
+#include "market/orderbook/orderbook.hpp"
 
 namespace viperfish::reptoid {
 

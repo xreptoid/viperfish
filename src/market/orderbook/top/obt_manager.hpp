@@ -1,8 +1,5 @@
-#ifndef INCLUDE_VIPERFISH_MARKET_OBT_MANAGER_HPP
-#define INCLUDE_VIPERFISH_MARKET_OBT_MANAGER_HPP
-
-#include "./obt.hpp"
-
+#ifndef VIPERFISH_MARKET_ORDERBOOK_OBT_MANAGER_HPP
+#define VIPERFISH_MARKET_ORDERBOOK_OBT_MANAGER_HPP
 #include <string>
 #include <functional>
 #include <vector>
@@ -10,6 +7,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <mutex>
+#include "./obt.hpp"
 
 #define VIPERFISH_OBT_MANAGER_S2OBT_BUFS_N 2
 
