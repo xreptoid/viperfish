@@ -7,7 +7,7 @@ curl -fsSL https://reptoid-market-data-00.s3.ap-northeast-1.amazonaws.com/debian
 
 ### Add Reptoid repo
 ```bash
-echo "dep [signed-by=/usr/share/keyrings/viperfish.gpg] https://reptoid-market-data-00.s3.ap-northeast-1.amazonaws.com/debian-repo focal main" | sudo tee /etc/apt/sources.list.d/viperfish.list
+echo "deb [signed-by=/usr/share/keyrings/viperfish.gpg] https://reptoid-market-data-00.s3.ap-northeast-1.amazonaws.com/debian-repo focal main" | sudo tee /etc/apt/sources.list.d/viperfish.list
 
 sudo apt update
 ```
