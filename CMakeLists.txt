@@ -32,6 +32,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 file(GLOB_RECURSE COMMON_CPP_FILES src/*.cpp)
+set(BUILD_SHARED_LIBS OFF)
 
 add_library(
         viperfish
