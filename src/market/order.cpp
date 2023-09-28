@@ -1,4 +1,5 @@
 #include "./order.hpp"
+#include <stdexcept>
 
 namespace viperfish::market {
     

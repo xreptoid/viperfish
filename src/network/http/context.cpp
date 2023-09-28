@@ -177,7 +177,7 @@ namespace viperfish::network::http {
     )
         : Request(
             method, host, port, path,
-            headers + Headers({ {"Content-Type", "application/x-www-form-urlencoded"} }))
+            headers + Headers({Header{"Content-Type", "application/x-www-form-urlencoded"}}))
         , body(body)
     {}
 
@@ -205,7 +205,7 @@ namespace viperfish::network::http {
     )
             : Request(
                 method, host, port, path,
-                headers + Headers({ {"Content-Type", "application/json"} }))
+                headers + Headers({Header{"Content-Type", "application/json"}}))
             , body(body)
     {}
 

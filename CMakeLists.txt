@@ -40,6 +40,7 @@ add_library(
 
 target_link_libraries(
         viperfish
+        -static
         ${CURL_LIBRARIES}
         ${OPENSSL_SSL_LIBRARY}
         ${OPENSSL_CRYPTO_LIBRARY}
