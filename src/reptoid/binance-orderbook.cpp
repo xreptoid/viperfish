@@ -1,5 +1,8 @@
 #include "./binance-orderbook.hpp"
+#include <future>
+#include "network/http/http.hpp"
 #include "market/order.hpp"
+#include "binance/exchange_info.hpp"
 
 namespace viperfish::reptoid {
 
@@ -9,9 +12,15 @@ namespace viperfish::reptoid {
         this->consumer = new viperfish::market::orderbook::large::Consumer();
         this->run_binance_consumers();
         this->api = new Api();
-        auto snapshots = this->api->get_snapshots();
-        auto diffs = this->api->get_ob_diffs_tail(0, 0);
-        // pass snapshot + diffs to Consumer
+
+        auto ob_snapshots_future = std::async([this]() { return this->api->get_snapshots(); });
+        auto ob_diffs_tail_future = std::async([this]() { return this->api->get_ob_diffs_tail(); });
+        auto ob_snapshots = ob_snapshots_future.get();
+        auto ob_diffs_tail = ob_diffs_tail_future.get();
+        std::cout << "ob_snapshots OK" << std::endl;
+        std::cout << "ob_diffs_tail OK" << std::endl;
+        this->consumer->set_ob_snapshots(ob_snapshots);
+        this->consumer->set_ob_diffs_tail(ob_diffs_tail);
     }
 
     LargeBinanceOrderBookConsumer::~LargeBinanceOrderBookConsumer() {
@@ -39,8 +48,12 @@ namespace viperfish::reptoid {
     }
 
     void LargeBinanceOrderBookConsumer::run_binance_consumers() {
-        auto ei;
-        auto symbols = ei;
+        auto ei_data = json::parse(network::http::request_get("https://api.binance.com/api/v3/exchangeInfo").buf);
+        auto ei = binance::BinanceExchangeInfo(binance::SPOT, ei_data);
+        std::vector<std::string> symbols;
+        for (const auto& symbol: ei.spot_symbols) {
+            symbols.push_back(symbol.binance());
+        }
         auto symbols_batches = get_symbols_batches(symbols);
         for (const auto& batch: symbols_batches) {
             binance_ob_diff_consumers.push_back(create_ob_diff_consumer(batch));

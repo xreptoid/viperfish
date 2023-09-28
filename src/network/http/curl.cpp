@@ -31,7 +31,7 @@ namespace viperfish::network::http {
             }
 
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curl_headers);
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_URL, url_with_params.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
             res = curl_easy_perform(curl);

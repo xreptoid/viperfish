@@ -2,6 +2,7 @@
 #include "network/http/http.hpp"
 #include "strings.hpp"
 #include "gzip/decompress.hpp"
+#include "timestamp.hpp"
 
 namespace viperfish::reptoid {
 
@@ -41,7 +42,9 @@ namespace viperfish::reptoid {
         return market::orderbook::large::Snapshots(snapshots);
     }
 
-    market::orderbook::large::ObDiffsTail Api::get_ob_diffs_tail(std::int64_t ts_from, std::int64_t ts_to) {
+    market::orderbook::large::ObDiffsTail Api::get_ob_diffs_tail() {
+        auto ts_from = get_current_ts() - 5 * 60 * 1000;
+        auto ts_to = get_current_ts() - 2 * 1000;
         auto data = json::parse(
             network::http::request_get("https://api-ob.reptoid.com/diffs/",
             network::http::QueryString({
@@ -49,6 +52,7 @@ namespace viperfish::reptoid {
                 {"ts_to", std::to_string(ts_to)},
             })
         ).buf);
+        std::cout << "diffs head received " << data.dump() << std::endl;
         auto result_url = data["data"]["result-url"].get<std::string>();
 
         std::cout << "downloading diffs" << std::endl;

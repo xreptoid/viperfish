@@ -11,7 +11,7 @@ namespace viperfish::reptoid {
         virtual ~Api();
 
         virtual market::orderbook::large::Snapshots get_snapshots();
-        virtual market::orderbook::large::ObDiffsTail get_ob_diffs_tail(std::int64_t ts_from, std::int64_t ts_to);
+        virtual market::orderbook::large::ObDiffsTail get_ob_diffs_tail();
 
     protected:
         virtual void update_endpoints();
