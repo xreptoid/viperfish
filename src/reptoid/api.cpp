@@ -14,7 +14,7 @@ namespace viperfish::reptoid {
     Api::~Api() {}
 
     void Api::update_endpoints() {
-        auto resp = json::parse(network::http::request_get("https://reptoid.com/api/orderbook/meta").buf); 
+        auto resp = json::parse(network::http::request_get("https://www.reptoid.com/api/orderbook/meta").buf); 
         auto data = json_field_get<json>(resp, "data");
         this->snapshots_url = json_field_get<std::string>(data, "snapshotsUrl");
         this->ob_diffs_tail_url = json_field_get<std::string>(data, "obDiffsTailUrl");
