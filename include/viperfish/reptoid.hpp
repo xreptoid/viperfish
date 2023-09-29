@@ -1,10 +1,22 @@
 #ifndef VIPERFISH_REPTOID_PUBLIC_HPP
 #define VIPERFISH_REPTOID_PUBLIC_HPP
-#include "market/orderbook/large/consumer.hpp"
-#include "binance.hpp"
-#include "reptoid/api.hpp"
+#include <vector>
+#include <string>
+#include "./json.hpp"
+
+namespace viperfish {
+
+    namespace binance {
+        class BinanceConsumer;
+    }
+
+    namespace market::orderbook::large {
+        class Consumer;
+    }
+}
 
 namespace viperfish::reptoid {
+    class Api;
 
     class LargeBinanceOrderBookConsumer {
     public:

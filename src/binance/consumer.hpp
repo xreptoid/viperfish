@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 
-#include "json.hpp"
+#include "viperfish/json.hpp"
 #include "network/ws.hpp"
 #include "./mode.hpp"
 #include "market/orderbook/top/obt.hpp"

@@ -3,6 +3,7 @@
 #include "strings.hpp"
 #include "gzip/decompress.hpp"
 #include "timestamp.hpp"
+#include "json/getter.hpp"
 
 namespace viperfish::reptoid {
 

@@ -1,5 +1,6 @@
 #include "binance/consumer.hpp"
 #include "timestamp.hpp"
+#include "json/getter.hpp"
 
 namespace viperfish::binance {
 

@@ -6,12 +6,12 @@
 #   define _GNU_SOURCE 
 #endif 
 #include <boost/stacktrace.hpp>
-#include "json/json_obj.hpp"
+#include "viperfish/json.hpp"
 
 namespace viperfish {
 
     template<typename T>
-    std::optional<T> json_field_get_o(const viperfish::json& obj, const std::string& key) {
+    std::optional<T> json_field_get_o(const json& obj, const std::string& key) {
         auto it = obj.find(key);
         if (it == obj.end()) {
             return {};
@@ -20,7 +20,7 @@ namespace viperfish {
     }
 
     template<typename T>
-    T json_field_get(const viperfish::json& obj, const std::string& key) {
+    T json_field_get(const json& obj, const std::string& key) {
         auto o = json_field_get_o<T>(obj, key);
         if (!o.has_value()) {
             std::cout << boost::stacktrace::stacktrace() << std::endl;;
@@ -30,7 +30,7 @@ namespace viperfish {
     }
 
     template<typename T>
-    T json_field_get(const viperfish::json& obj, const std::string& key, const T& default_value) {
+    T json_field_get(const json& obj, const std::string& key, const T& default_value) {
         auto o = json_field_get_o<T>(obj, key);
         if (!o.has_value()) {
             return default_value;

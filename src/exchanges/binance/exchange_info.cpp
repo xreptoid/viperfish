@@ -1,5 +1,6 @@
 #include "binance/exchange_info.hpp"
 #include <iostream>
+#include "json/getter.hpp"
 
 namespace viperfish::binance {
 

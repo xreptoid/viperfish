@@ -32,7 +32,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 file(GLOB_RECURSE COMMON_CPP_FILES src/*.cpp)
-set(BUILD_SHARED_LIBS OFF)
+
+if (LINUX)
+        set(BUILD_SHARED_LIBS OFF)
+        set(VP_LINK_STATIC "-static")
+endif()
 
 add_library(
         viperfish
@@ -41,7 +45,7 @@ add_library(
 
 target_link_libraries(
         viperfish
-        -static
+        ${VP_LINK_STATIC}
         ${CURL_LIBRARIES}
         ${OPENSSL_SSL_LIBRARY}
         ${OPENSSL_CRYPTO_LIBRARY}

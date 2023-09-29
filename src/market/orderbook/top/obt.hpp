@@ -2,7 +2,7 @@
 #define VIPERFISH_MARKET_ORDERBOOK_OBT_HPP
 #include <string>
 #include <optional>
-#include "json.hpp"
+#include "viperfish/json.hpp"
 #include "market/order.hpp"
 #include "market/orderbook/order.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef INCLUDE_VIPERFISH_JSON_LOADER_HPP
 #define INCLUDE_VIPERFISH_JSON_LOADER_HPP
 
-#include "json/json_obj.hpp"
+#include "viperfish/json.hpp"
 
 namespace viperfish {
     json load_json_from_file(const std::string& file_path);

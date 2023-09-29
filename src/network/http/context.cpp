@@ -3,8 +3,8 @@
 #include "network/http/http_base.hpp"
 #include <string>
 #include <vector>
-#include "json.hpp"
 #include "strings.hpp"
+#include "json/getter.hpp"
 
 namespace viperfish::network::http {
 

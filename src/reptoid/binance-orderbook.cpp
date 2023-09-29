@@ -1,8 +1,12 @@
-#include "./binance-orderbook.hpp"
+#include "viperfish/reptoid.hpp"
 #include <future>
+#include "./api.hpp"
 #include "network/http/http.hpp"
 #include "market/order.hpp"
 #include "binance/exchange_info.hpp"
+#include "binance/consumer.hpp"
+#include "market/orderbook/large/consumer.hpp"
+#include "json/getter.hpp"
 
 namespace viperfish::reptoid {
 

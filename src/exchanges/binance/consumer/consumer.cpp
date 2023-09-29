@@ -7,9 +7,10 @@
 #include <fstream>
 #include <filesystem>
 #include <boost/algorithm/string.hpp>
-#include "json.hpp"
+#include "viperfish/json.hpp"
 #include "network.hpp"
 #include "timestamp.hpp"
+#include "json/getter.hpp"
 
 namespace viperfish::binance {
 
