@@ -18,11 +18,8 @@ namespace viperfish::reptoid {
         this->api = new Api();
 
         auto ob_snapshots_future = std::async([this]() { return this->api->get_snapshots(); });
-        auto ob_diffs_tail_future = std::async([this]() { return this->api->get_ob_diffs_tail(); });
+        auto ob_diffs_tail = this->api->get_ob_diffs_tail();
         auto ob_snapshots = ob_snapshots_future.get();
-        auto ob_diffs_tail = ob_diffs_tail_future.get();
-        std::cout << "ob_snapshots OK" << std::endl;
-        std::cout << "ob_diffs_tail OK" << std::endl;
         this->consumer->set_ob_snapshots(ob_snapshots);
         this->consumer->set_ob_diffs_tail(ob_diffs_tail);
     }
@@ -39,7 +36,6 @@ namespace viperfish::reptoid {
         int max_batch_size = 300;
         auto n_batches = (symbols.size() + max_batch_size - 1) / max_batch_size;
         auto batch_size = (symbols.size() + n_batches - 1) / n_batches;
-        std::cout << n_batches << " symbols batches, " << batch_size << " symbols in batch" << std::endl;
         std::vector<std::vector<std::string>> batches;
         for (int i = 0; i < symbols.size(); ++i) {
             int i_batch = i / batch_size;

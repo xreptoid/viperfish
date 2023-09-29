@@ -15,6 +15,9 @@ namespace viperfish::reptoid {
 
     protected:
         virtual void update_endpoints();
+
+        std::string snapshots_url;
+        std::string ob_diffs_tail_url;
     };
 }
 
