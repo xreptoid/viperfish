@@ -56,7 +56,7 @@ target_link_libraries(
 include(GNUInstallDirs)
 
 export(PACKAGE viperfish)
-set_target_properties(viperfish PROPERTIES PUBLIC_HEADER include/viperfish.hpp)
+#set_target_properties(viperfish PROPERTIES PUBLIC_HEADER include/viperfish.hpp)
 install(DIRECTORY include/viperfish DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(TARGETS viperfish EXPORT viperfishConfig)
 install(EXPORT viperfishConfig DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/viperfish)

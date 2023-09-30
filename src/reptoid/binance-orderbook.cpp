@@ -5,6 +5,7 @@
 #include "market/order.hpp"
 #include "binance/exchange_info.hpp"
 #include "binance/consumer.hpp"
+#include "market/order.hpp"
 #include "market/orderbook/large/consumer.hpp"
 #include "json/getter.hpp"
 
@@ -30,6 +31,14 @@ namespace viperfish::reptoid {
         }
         delete this->consumer;
         delete this->api;
+    }
+
+    long double LargeBinanceOrderBookConsumer::get_top_amount(
+        const std::string& symbol,
+        market::OrderSide side,
+        long double price
+    ) {
+        return consumer->obs_container.get(symbol)->get_top_amount(side, price);
     }
 
     std::vector<std::vector<std::string>> get_symbols_batches(const std::vector<std::string>& symbols) {

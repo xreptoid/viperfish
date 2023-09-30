@@ -32,6 +32,8 @@ namespace viperfish::market::orderbook::large {
 
     class Consumer {
     public:
+        market::orderbook::ObsContainer obs_container;
+        
         virtual void set_ob_snapshots(const Snapshots&);
         virtual void set_ob_diffs_tail(const ObDiffsTail&);
         virtual void try_init_data();
@@ -44,7 +46,6 @@ namespace viperfish::market::orderbook::large {
         std::optional<Snapshots> ob_snapshots;
         std::optional<ObDiffsTail> ob_diffs_tail;
         std::vector<OrderBookDiff> ob_diffs_init_buffer;
-        market::orderbook::ObsContainer obs_container;
         std::vector<std::function<void()>> on_event_callbacks;
     };
 }
