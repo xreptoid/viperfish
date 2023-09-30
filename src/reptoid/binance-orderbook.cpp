@@ -11,8 +11,11 @@
 
 namespace viperfish::reptoid {
 
-    LargeBinanceOrderBookConsumer::LargeBinanceOrderBookConsumer() 
+    LargeBinanceOrderBookConsumer::LargeBinanceOrderBookConsumer(
+        const std::vector<std::string>& symbols
+    ) 
         : consumer(NULL)
+        , symbols(symbols)
     {
         this->consumer = new viperfish::market::orderbook::large::Consumer();
         this->run_binance_consumers();
@@ -57,11 +60,12 @@ namespace viperfish::reptoid {
     }
 
     void LargeBinanceOrderBookConsumer::run_binance_consumers() {
-        auto ei_data = json::parse(network::http::request_get("https://api.binance.com/api/v3/exchangeInfo").buf);
-        auto ei = binance::BinanceExchangeInfo(binance::SPOT, ei_data);
-        std::vector<std::string> symbols;
-        for (const auto& symbol: ei.spot_symbols) {
-            symbols.push_back(symbol.binance());
+        if (symbols.empty()) {
+            auto ei_data = json::parse(network::http::request_get("https://api.binance.com/api/v3/exchangeInfo").buf);
+            auto ei = binance::BinanceExchangeInfo(binance::SPOT, ei_data);
+            for (const auto& symbol: ei.spot_symbols) {
+                symbols.push_back(symbol.binance());
+            }
         }
         auto symbols_batches = get_symbols_batches(symbols);
         for (const auto& batch: symbols_batches) {

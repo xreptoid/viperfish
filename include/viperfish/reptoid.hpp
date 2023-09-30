@@ -21,9 +21,8 @@ namespace viperfish::reptoid {
 
     class LargeBinanceOrderBookConsumer {
     public:
-        
 
-        LargeBinanceOrderBookConsumer();
+        LargeBinanceOrderBookConsumer(const std::vector<std::string>& symbols = {});
         virtual ~LargeBinanceOrderBookConsumer();
 
         virtual long double get_top_amount(const std::string&, market::OrderSide, long double);
@@ -33,6 +32,8 @@ namespace viperfish::reptoid {
 
         void run_binance_consumers();
         binance::BinanceConsumer* create_ob_diff_consumer(const std::vector<std::string>& symbols);
+
+        std::vector<std::string> symbols;
 
         market::orderbook::large::Consumer* consumer;
 
