@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <optional>
+#include <functional>
 #include "market/orderbook/orderbook.hpp"
 
 namespace viperfish::market::orderbook::large {
@@ -33,7 +34,7 @@ namespace viperfish::market::orderbook::large {
     class Consumer {
     public:
         market::orderbook::ObsContainer obs_container;
-        
+
         virtual void set_ob_snapshots(const Snapshots&);
         virtual void set_ob_diffs_tail(const ObDiffsTail&);
         virtual void try_init_data();
