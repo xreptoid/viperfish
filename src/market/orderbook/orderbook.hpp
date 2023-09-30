@@ -10,7 +10,6 @@
 #include <vector>
 #include "market/order.hpp"
 #include "./order.hpp"
-#include "./top/obt.hpp"
 
 namespace viperfish::market::orderbook {
 
@@ -45,8 +44,6 @@ namespace viperfish::market::orderbook {
     protected:
         std::unordered_map<std::string, Order> sprice2order;
         std::map<fprice_t, std::string> fprice2sprice;
-        
-        int trunc_top(double price);
     };
 
     class OrderBookDiff;
@@ -107,8 +104,6 @@ namespace viperfish::market::orderbook {
 
     class OrderBook : public OrderBookBase {
     public:
-        std::list<OrderBookDiff> last_diffs;
-        std::list<OrderBookTop> last_obts;
         std::optional<std::int64_t> last_diff_id;
         std::optional<std::int64_t> last_snapshot_id;
         std::optional<std::int64_t> timestamp;
@@ -127,21 +122,15 @@ namespace viperfish::market::orderbook {
                 : OrderBookBase(other.symbol, other.last_id, other.bids, other.asks) {}
 
         void apply_diff(const OrderBookDiff&);
-        void apply_obt(const OrderBookTop&);
         void apply_snapshot(const OrderBook&);
-        void relax_obts_prefix();
-        void relax_obts();
-        void relax_obts() const { const_cast<OrderBook*>(this)->relax_obts(); };
         amount_t get_top_amount(OrderSide, fprice_t) const;
         std::vector<Order> get_bids(const std::optional<std::size_t>& max_count = {}) const override;
         std::vector<Order> get_asks(const std::optional<std::size_t>& max_count = {}) const override;
 
     protected:
         mutable std::mutex common_mutex;
-        mutable std::mutex obt_mutex;
 
         void apply_diff_body(const OrderBookDiff&);
-        void apply_obt_body(const OrderBookTop&);
     };
 
     class OrderBookDiff : public OrderBookBase {
@@ -157,7 +146,6 @@ namespace viperfish::market::orderbook {
         virtual ~ObsContainer();
 
         bool put(const OrderBookDiff&);
-        bool put(const OrderBookTop&);
         bool put_snapshot(const OrderBook&);
         OrderBook* get(const std::string&);
 
