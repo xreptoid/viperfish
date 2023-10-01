@@ -102,7 +102,10 @@ namespace viperfish::market::orderbook {
         if (!last_update_id.has_value()) {
             throw std::runtime_error("OrderBook(" + symbol + "): Applying diff to not initialized orderbook");
         }
-        if (diff.first_update_id > *last_update_id + 1 || diff.final_update_id <= *last_update_id) {
+        if (diff.final_update_id <= *last_update_id) {
+            return;
+        }
+        if (diff.first_update_id > *last_update_id + 1) {
             throw std::runtime_error(
                 "OrderBook(" + symbol + "): "
                 + "Applying diff with incorrect update id. "
