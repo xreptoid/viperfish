@@ -36,6 +36,7 @@ namespace viperfish::reptoid::orderbook {
     protected:
         void on_event(const json&);
 
+        void init_symbols();
         void run_binance_consumers();
         binance::BinanceConsumer* create_ob_diff_consumer(const std::vector<std::string>& symbols);
 

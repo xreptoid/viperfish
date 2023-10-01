@@ -92,9 +92,27 @@ namespace viperfish::market::orderbook {
     }
 
     void OrderBook::apply_diff(const OrderBookDiff& diff) {
+        if (symbol != diff.symbol) {
+            throw std::runtime_error(
+                "OrderBook(" + symbol + "): "
+                + "Applying diff with incorrect symbol: " + diff.symbol
+            );
+        }
         std::lock_guard lock(common_mutex);
+        if (!last_update_id.has_value()) {
+            throw std::runtime_error("OrderBook(" + symbol + "): Applying diff to not initialized orderbook");
+        }
+        if (diff.first_update_id > *last_update_id + 1 || diff.final_update_id <= *last_update_id) {
+            throw std::runtime_error(
+                "OrderBook(" + symbol + "): "
+                + "Applying diff with incorrect update id. "
+                + "first_update_id = " + std::to_string(diff.first_update_id)
+                + ". final_update_id = " + std::to_string(diff.final_update_id)
+                + ". ob last_update_id = " + std::to_string(*last_update_id)
+            );
+        }
         apply_diff_body(diff);
-        last_diff_id = diff.last_id;
+        last_update_id = diff.final_update_id;
     }
 
     void OrderBook::apply_diff_body(const OrderBookDiff& diff) {
@@ -107,22 +125,23 @@ namespace viperfish::market::orderbook {
     }
 
     void OrderBook::apply_snapshot(const OrderBook& snapshot) {
-        if (!snapshot.last_id.has_value()) {
-            return;
+        if (symbol != snapshot.symbol) {
+            throw std::runtime_error(
+                "OrderBook(" + symbol + "): "
+                + "Applying snapshot with incorrect symbol: " + snapshot.symbol
+            );
+        }
+        if (!snapshot.last_update_id.has_value()) {
+            throw std::runtime_error("OrderBook(" + symbol + "): Applying snapshot without last_update_id");
         }
         std::lock_guard lock(common_mutex);
-        if (last_snapshot_id.has_value() && *last_snapshot_id >= *snapshot.last_id) {
-            return;
-        }
-
         for (const auto& bid: snapshot.get_bids()) {
             put_order(OrderSide::BUY, bid);
         }
         for (const auto& ask: snapshot.get_asks()) {
             put_order(OrderSide::SELL, ask);
         }
-
-        last_snapshot_id = snapshot.last_id;
+        last_update_id = snapshot.last_update_id;
     }
 
     amount_t OrderBook::get_top_amount(OrderSide order_side, fprice_t price) const {
@@ -141,9 +160,11 @@ namespace viperfish::market::orderbook {
         return OrderBookBase::get_asks(max_count);
     }
 
-    ObsContainer::~ObsContainer() {
-        for (const auto& [_, mutex]: symbol2mutex) {
-            delete mutex;
+    ObsContainer::ObsContainer(const std::vector<std::string>& symbols)
+            : symbols(symbols)
+    {
+        for (const auto& symbol: symbols) {
+            symbol2ob.insert(std::make_pair(symbol, OrderBook(symbol)));
         }
     }
 
@@ -160,15 +181,10 @@ namespace viperfish::market::orderbook {
     }
 
     OrderBook* ObsContainer::get(const std::string& symbol) {
-        std::lock_guard lock(*get_symbol_mutex(symbol));
-        return &symbol2ob[symbol];
-    }
-
-    std::mutex* ObsContainer::get_symbol_mutex(const std::string& symbol) {
-        std::lock_guard lock(meta_mutex);
-        if (!symbol2mutex.count(symbol)) {
-            symbol2mutex[symbol] = new std::mutex();
+        auto it = symbol2ob.find(symbol);
+        if (it == symbol2ob.end()) {
+            throw std::runtime_error("ObsContainer: no symbol " + symbol);
         }
-        return symbol2mutex[symbol];
+        return &it->second;
     }
 }

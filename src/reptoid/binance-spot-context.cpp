@@ -12,16 +12,18 @@
 namespace viperfish::reptoid::orderbook {
 
     BinanceSpotContext::BinanceSpotContext(
-        const std::vector<std::string>& symbols
+        const std::vector<std::string>& symbols_
     ) 
         : consumer(NULL)
-        , symbols(symbols)
+        , symbols(symbols_)
     {
-        this->consumer = new viperfish::market::orderbook::large::Consumer();
+        this->init_symbols();
+        this->consumer = new viperfish::market::orderbook::large::Consumer(this->symbols);
         this->run_binance_consumers();
         this->api = new Api();
 
         auto ob_snapshots_future = std::async([this]() { return this->api->get_snapshots(); });
+        sleep(15);
         auto ob_diffs_tail = this->api->get_ob_diffs_tail();
         auto ob_snapshots = ob_snapshots_future.get();
         this->consumer->set_ob_snapshots(ob_snapshots);
@@ -59,6 +61,9 @@ namespace viperfish::reptoid::orderbook {
     }
 
     std::vector<std::vector<std::string>> get_symbols_batches(const std::vector<std::string>& symbols) {
+        if (symbols.empty()) {
+            return {};
+        }
         int max_batch_size = 300;
         auto n_batches = (symbols.size() + max_batch_size - 1) / max_batch_size;
         auto batch_size = (symbols.size() + n_batches - 1) / n_batches;
@@ -73,14 +78,39 @@ namespace viperfish::reptoid::orderbook {
         return batches;
     }
 
-    void BinanceSpotContext::run_binance_consumers() {
-        if (symbols.empty()) {
-            auto ei_data = json::parse(network::http::request_get("https://api.binance.com/api/v3/exchangeInfo").buf);
-            auto ei = binance::BinanceExchangeInfo(binance::SPOT, ei_data);
-            for (const auto& symbol: ei.spot_symbols) {
-                symbols.push_back(symbol.binance());
-            }
+    void BinanceSpotContext::init_symbols() {
+        std::unordered_set<std::string> ei_symbols_set;
+        auto ei_data = json::parse(network::http::request_get("https://api.binance.com/api/v3/exchangeInfo").buf);
+        auto ei = binance::BinanceExchangeInfo(binance::SPOT, ei_data);
+        for (const auto& symbol: ei.spot_symbols) {
+            ei_symbols_set.insert(symbol.binance());
         }
+        if (this->symbols.size()) {
+            std::vector<std::string> filtered_symbols;
+            std::vector<std::string> ignored_symbols;
+            for (const auto& symbol: this->symbols) {
+                if (ei_symbols_set.count(symbol)) {
+                    filtered_symbols.push_back(symbol);
+                } else {
+                    ignored_symbols.push_back(symbol);
+                }
+            }
+            if (ignored_symbols.size()) {
+                std::cout << "Symbols that not supported by Binance SPOT trading and were ignored:" << std::endl;
+                std::cout << "\t\t";
+                for (const auto& symbol: ignored_symbols) {
+                    std::cout << symbol << " ";
+                }
+                std::cout << std::endl;
+            }
+            this->symbols = filtered_symbols;
+        } else {
+            this->symbols = std::vector(ei_symbols_set.begin(), ei_symbols_set.end());
+        }
+    }
+
+    void BinanceSpotContext::run_binance_consumers() {
+        
         auto symbols_batches = get_symbols_batches(symbols);
         for (const auto& batch: symbols_batches) {
             binance_ob_diff_consumers.push_back(create_ob_diff_consumer(batch));
@@ -110,7 +140,9 @@ namespace viperfish::reptoid::orderbook {
         }
         auto symbol = json_field_get<std::string>(data, "s");
         auto ts = json_field_get<std::uint64_t>(data, "E");
-        auto ob_diff = market::orderbook::OrderBookDiff(symbol);
+        auto first_update_id = json_field_get<std::uint64_t>(data, "U");
+        auto final_update_id = json_field_get<std::uint64_t>(data, "u");
+        auto ob_diff = market::orderbook::OrderBookDiff(symbol, first_update_id, final_update_id);
         for (const auto& o: data["b"]) {
             ob_diff.put_order(market::BUY, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
         }

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <optional>
 #include <functional>
 #include "market/orderbook/orderbook.hpp"
@@ -35,6 +36,8 @@ namespace viperfish::market::orderbook::large {
     public:
         market::orderbook::ObsContainer obs_container;
 
+        Consumer(const std::vector<std::string>& symbols);
+
         virtual void set_ob_snapshots(const Snapshots&);
         virtual void set_ob_diffs_tail(const ObDiffsTail&);
         virtual void try_init_data();
@@ -42,6 +45,9 @@ namespace viperfish::market::orderbook::large {
         virtual void push_ob_diff(const OrderBookDiff&);
 
     protected:
+        std::vector<std::string> symbols;
+        std::unordered_set<std::string> symbols_set;
+
         volatile bool is_ready = false;
         std::mutex init_data_mutex;
         std::optional<Snapshots> ob_snapshots;

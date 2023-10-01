@@ -124,6 +124,7 @@ namespace viperfish::binance {
 
         void run_async();
         void run();
+        void wait_for_initializing();
         void finish();
         std::string _get_app_name() const override { return "binance-consumer-con"; }
         void enable_tracking() { tracking_enabled = true; }
@@ -139,6 +140,8 @@ namespace viperfish::binance {
         void process_canceled_order(json obj, const std::string& data);
 
         static std::string get_streams_param(const std::vector<std::string>& streams);
+
+        volatile bool initialized = false;
         std::vector<std::string> symbols;
         std::set<std::string> symbols_set;
         std::optional<std::function<void(const std::string&, const json&, const json&)>> on_event_callback;

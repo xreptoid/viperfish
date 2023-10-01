@@ -135,52 +135,26 @@ namespace viperfish::binance {
             std::this_thread::sleep_for(std::chrono::milliseconds(150));
         }
 
-        if (synchronized_tracking_enabled) {
-            for (const auto &con: connections) {
-                con->enable_tracking();
-            }
-        }
-
         initialized = true;
-
         auto last_reconnect_ts = get_current_ts();
-
         while (!need_to_finish) {
             std::int64_t period = 5 * 60 * 1000;
-            if (get_current_ts() - last_reconnect_ts < period) {
-                std::int64_t sleep_for = period - static_cast<std::int64_t>(get_current_ts() - last_reconnect_ts);
-                if (sleep_for > 0) {
-                    sleep(sleep_for / 1000 + 1);
-                }
-                continue;
+            while (!need_to_finish && get_current_ts() - last_reconnect_ts < period) {
+                std::int64_t sleep_ms = period - static_cast<std::int64_t>(get_current_ts() - last_reconnect_ts);
+                int sleep_secods = sleep_ms / 1000 + 1;
+                sleep(std::min(sleep_secods, 2));
+            }
+            if (need_to_finish) {
+                break;
             }
             last_reconnect_ts = get_current_ts();
-
             reconnect();
         }
-        std::cout << log_prefix() << "main running cycle was finished" << std::endl;
-
-        if (synchronized_tracking_enabled) {
-            std::cout << log_prefix() << "disabling tracking..." << std::endl;
-            for (const auto& con: connections) {
-                con->disable_tracking();
-            }
-            std::cout << log_prefix() << "disabling tracking OK" << std::endl;
-        }
-
-        std::cout << log_prefix() << "deleting connections..." << std::endl;
+        
         for (auto& con: connections) {
-            if (synchronized_tracking_enabled) {
-                con->finish();
-            } else {
-                delete con;
-            }
+            delete con;
         }
-        std::cout << log_prefix() << "deleting connections OK" << std::endl;
-
-        if (!synchronized_tracking_enabled) {
-            connections.clear();
-        }
+        connections.clear();
 
         initialized = false;
         need_to_finish = false;
@@ -222,12 +196,6 @@ namespace viperfish::binance {
 
         auto fast_hosts = get_fast_hosts();
         res_hosts.insert(res_hosts.end(), fast_hosts.begin(), fast_hosts.end());
-        std::cout
-            << log_prefix() << res_hosts.size() << " hosts"
-            << " (" << dns_hosts.size() << " dns"
-            << ", " << fast_hosts.size() << " fast"
-            << ") zone = " << zone
-            << std::endl;
         return res_hosts;
     }
 
@@ -267,6 +235,7 @@ namespace viperfish::binance {
             con->disable_tracking();
         }
         con->run_async();
+        con->wait_for_initializing();
         return con;
     }
 
@@ -278,13 +247,8 @@ namespace viperfish::binance {
                 std::this_thread::sleep_for(std::chrono::milliseconds(150));
             }
             auto host = new_hosts[i];
-            if (i < connections.size()) {
-                connections[i]->finish();
-                open_orders = connections[i]->open_orders;
-            }
             auto con = create_connection(i, host, open_orders);
             if (i < connections.size()) {
-                std::this_thread::sleep_for(std::chrono::seconds(5)); // FIXME
                 delete connections[i];
                 connections[i] = con;
             }

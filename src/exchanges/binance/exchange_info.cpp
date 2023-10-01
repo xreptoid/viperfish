@@ -50,13 +50,16 @@ namespace viperfish::binance {
             std::string base_asset = json_field_get<std::string>(symbol_data, "baseAsset");
             std::string quote_asset = json_field_get<std::string>(symbol_data, "quoteAsset");
             std::string symbol_orig = base_asset + "/" + quote_asset;
+            bool spot_permissions = false;
             bool is_enabled = json_field_get<std::string>(symbol_data, mode == FUTURES_DELIVERY ? "contractStatus" : "status") == "TRADING";
             bool is_margin_enabled = false;
             if (is_enabled && (mode == SPOT || mode == CROSS_MARGIN || mode == ISOLATED_MARGIN)) {
                 for (const auto& p: json_field_get<std::vector<std::string>>(symbol_data, "permissions")) {
+                    if (p == "SPOT") {
+                        spot_permissions = true;
+                    }
                     if (p == "MARGIN") {
                         is_margin_enabled = true;
-                        break;
                     }
                 }
             }
@@ -105,7 +108,7 @@ namespace viperfish::binance {
             }
 
             if (is_enabled) {
-                bool is_spot_enabled = true;
+                bool is_spot_enabled = spot_permissions && json_field_get<bool>(symbol_data, "isSpotTradingAllowed", false);
                 if (mode == FUTURES) {
                     is_spot_enabled = symbol_data["contractType"] == "PERPETUAL";
                 }

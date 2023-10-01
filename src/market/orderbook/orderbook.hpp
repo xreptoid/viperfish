@@ -50,23 +50,18 @@ namespace viperfish::market::orderbook {
 
     class OrderBookBase {
     public:
-
         std::string symbol;
-        std::optional<std::int64_t> last_id;
         bool auto_remove_zero_amount;
-
         OrderBookSide bids;
         OrderBookSide asks;
 
         OrderBookBase(
             const std::string& symbol,
-            const std::optional<std::int64_t>& last_id = {},
             const OrderBookSide& bids = OrderBookSide(BUY),
             const OrderBookSide& asks = OrderBookSide(SELL),
             bool auto_remove_zero_amount = true
         )
                 : symbol(symbol)
-                , last_id(last_id)
                 , bids(bids)
                 , asks(asks)
                 , auto_remove_zero_amount(auto_remove_zero_amount)
@@ -78,11 +73,9 @@ namespace viperfish::market::orderbook {
 
         OrderBookBase(
             const std::string& symbol,
-            const std::optional<std::int64_t>& last_id = {},
             bool auto_remove_zero_amount = true
         )
                 : symbol(symbol)
-                , last_id(last_id)
                 , bids(OrderBookSide(BUY, auto_remove_zero_amount))
                 , asks(OrderBookSide(SELL, auto_remove_zero_amount))
                 , auto_remove_zero_amount(auto_remove_zero_amount)
@@ -104,22 +97,20 @@ namespace viperfish::market::orderbook {
 
     class OrderBook : public OrderBookBase {
     public:
-        std::optional<std::int64_t> last_diff_id;
-        std::optional<std::int64_t> last_snapshot_id;
-        std::optional<std::int64_t> timestamp;
+        std::optional<std::int64_t> last_update_id;
 
         OrderBook(
             const std::string& symbol,
-            const std::optional<std::int64_t>& last_id = {},
-            const std::optional<std::int64_t>& timestamp = {}
+            const std::optional<std::int64_t>& last_update_id = {}
         )
-                : OrderBookBase(symbol, last_id, true)
-                , timestamp(timestamp)
+                : OrderBookBase(symbol, true)
+                , last_update_id(last_update_id)
         {}
 
-        OrderBook(): OrderBookBase() {}
         OrderBook(const OrderBook& other)
-                : OrderBookBase(other.symbol, other.last_id, other.bids, other.asks) {}
+                : OrderBookBase(other.symbol, other.bids, other.asks)
+                , last_update_id(other.last_update_id)
+        {}
 
         void apply_diff(const OrderBookDiff&);
         void apply_snapshot(const OrderBook&);
@@ -135,26 +126,33 @@ namespace viperfish::market::orderbook {
 
     class OrderBookDiff : public OrderBookBase {
     public:
-        OrderBookDiff(const std::string& symbol, const std::optional<std::int64_t>& last_id = {})
-                : OrderBookBase(symbol, last_id, false) {}
+        std::uint64_t first_update_id;
+        std::uint64_t final_update_id;
+
+        OrderBookDiff(
+                const std::string& symbol,
+                std::uint64_t first_update_id,
+                std::uint64_t final_update_id
+        )
+            : OrderBookBase(symbol, false)
+            , first_update_id(first_update_id)
+            , final_update_id(final_update_id)
+        {}
     };
 
     class ObsContainer {
     public:
 
-        ObsContainer() = default;
-        virtual ~ObsContainer();
+        ObsContainer(const std::vector<std::string>& symbols);
+        virtual ~ObsContainer() {}
 
         bool put(const OrderBookDiff&);
         bool put_snapshot(const OrderBook&);
         OrderBook* get(const std::string&);
 
     protected:
+        std::vector<std::string> symbols;
         std::unordered_map<std::string, OrderBook> symbol2ob;
-        std::unordered_map<std::string, std::mutex*> symbol2mutex;
-        std::mutex meta_mutex;
-
-        std::mutex* get_symbol_mutex(const std::string&);
     };
 }
 

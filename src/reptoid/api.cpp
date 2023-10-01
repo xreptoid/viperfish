@@ -75,19 +75,32 @@ namespace viperfish::reptoid {
 
         market::orderbook::large::Snapshots::ob_map_t snapshots;
         for (const auto& [symbol, snapshot_data]: data.items()) {
-            auto snapshot_inner_data = json_field_get<json>(snapshot_data, "ob_snapshot");
+            json snapshot_inner_data;
+            std::uint64_t last_update_id;
+            std::vector<json> bids;
+            std::vector<json> asks;
+            try {
+                snapshot_inner_data = json_field_get<json>(snapshot_data, "ob_snapshot");
+                last_update_id = json_field_get<std::int64_t>(snapshot_inner_data, "lastUpdateId");
+                bids = json_field_get<std::vector<json>>(snapshot_inner_data, "bids");
+                asks = json_field_get<std::vector<json>>(snapshot_inner_data, "asks");
+            } catch (const std::exception& e) {
+                std::cout << "Error on getting fields from snapshot JSON: " << e.what() << std::endl;
+                std::cout << symbol << " " << snapshot_data.dump() << std::endl;
+                throw e;
+            }
             auto snapshot = market::orderbook::OrderBook(
                 symbol,
-                json_field_get<std::int64_t>(snapshot_inner_data, "lastUpdateId"),
-                json_field_get<std::int64_t>(snapshot_data, "local_ts_before")
+                last_update_id
+                //json_field_get<std::int64_t>(snapshot_data, "local_ts_before")
             );
-            for (const auto& o: json_field_get<std::vector<json>>(snapshot_inner_data, "bids")) {
+            for (const auto& o: bids) {
                 snapshot.put_order(
                     market::BUY,
                     market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>()))
                 );
             }
-            for (const auto& o: json_field_get<std::vector<json>>(snapshot_inner_data, "asks")) {
+            for (const auto& o: asks) {
                 snapshot.put_order(
                     market::SELL,
                     market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>()))
@@ -101,7 +114,7 @@ namespace viperfish::reptoid {
 
     market::orderbook::large::ObDiffsTail Api::get_ob_diffs_tail() {
         // FIXME
-        auto ts_from = get_current_ts() - 5 * 60 * 1000;
+        auto ts_from = get_current_ts() - 10 * 60 * 1000;
         auto ts_to = get_current_ts() - 2 * 1000;
         std::string resp;
         try {
@@ -155,11 +168,14 @@ namespace viperfish::reptoid {
                 std::cout << "Error on parsing orderbook diff item: " << e.what() << std::endl;
                 std::cout << diff_s << std::endl;
             }
-            market::orderbook::OrderBookDiff ob_diff(json_field_get<std::string>(ob_diff_data, "s"));
-            for (const auto& o: ob_diff_data["b"]) {
+            auto symbol = json_field_get<std::string>(ob_diff_data, "s");
+            auto first_update_id = json_field_get<std::uint64_t>(ob_diff_data, "U");
+            auto final_update_id = json_field_get<std::uint64_t>(ob_diff_data, "u");
+            market::orderbook::OrderBookDiff ob_diff(symbol, first_update_id, final_update_id);
+            for (const auto& o: json_field_get<std::vector<json>>(ob_diff_data, "b")) {
                 ob_diff.put_order(market::BUY, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
             }
-            for (const auto& o: ob_diff_data["a"]) {
+            for (const auto& o: json_field_get<std::vector<json>>(ob_diff_data, "a")) {
                 ob_diff.put_order(market::SELL, market::orderbook::Order::create(o[0].get<std::string>(), std::stold(o[1].get<std::string>())));
             }        
             ob_diffs.push_back(ob_diff);

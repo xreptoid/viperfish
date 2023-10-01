@@ -14,33 +14,52 @@ namespace viperfish::market::orderbook::large {
         : trigger_symbol(trigger_symbol)
     {}
 
+    Consumer::Consumer(const std::vector<std::string>& symbols)
+        : symbols(symbols)
+        , obs_container(symbols)
+    {
+        symbols_set = std::unordered_set(symbols.begin(), symbols.end());
+    }
+
     void Consumer::set_ob_snapshots(const Snapshots& snapshots) {
-        std::lock_guard lock(init_data_mutex);
         this->ob_snapshots.emplace(snapshots);
         this->try_init_data();
     }
 
     void Consumer::set_ob_diffs_tail(const ObDiffsTail& ob_diffs_tail) {
-        std::lock_guard lock(init_data_mutex);
         this->ob_diffs_tail = ob_diffs_tail;
         this->try_init_data();
     }
 
     void Consumer::try_init_data() {
+        std::lock_guard lock(init_data_mutex);
         if (!ob_snapshots.has_value()) {
             return;
         }
         if (!ob_diffs_tail.has_value()) {
             return;
         }
+        std::unordered_map<std::string, std::uint64_t> symbol2last_update_id;
         for (const auto& [symbol, snapshot]: ob_snapshots->ob_map) {
+            if (!symbols_set.count(symbol)) {
+                continue;
+            }
             this->obs_container.put_snapshot(snapshot);
+            symbol2last_update_id[symbol] = *snapshot.last_update_id;
         }
         for (const auto& ob_diff: ob_diffs_tail->ob_diffs) {
+            if (!symbols_set.count(ob_diff.symbol) || ob_diff.final_update_id <= symbol2last_update_id[ob_diff.symbol]) {
+                continue;
+            } 
             this->obs_container.put(ob_diff);
+            symbol2last_update_id[ob_diff.symbol] = ob_diff.final_update_id;
         }
         for (const auto& ob_diff: ob_diffs_init_buffer) {
+            if (!symbols_set.count(ob_diff.symbol) || ob_diff.final_update_id <= symbol2last_update_id[ob_diff.symbol]) {
+                continue;
+            } 
             this->obs_container.put(ob_diff);
+            symbol2last_update_id[ob_diff.symbol] = ob_diff.final_update_id;
         }
         is_ready = true;
     }

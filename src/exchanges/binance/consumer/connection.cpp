@@ -72,6 +72,12 @@ namespace viperfish::binance {
         ws_client->run();
     }
 
+    void BinanceConsumerConnection::wait_for_initializing() {
+        while (!initialized) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        }
+    }
+
     void BinanceConsumerConnection::finish() {
         if (ws_client != NULL) {
             ws_client->finish();
@@ -92,6 +98,7 @@ namespace viperfish::binance {
     }
 
     void BinanceConsumerConnection::callback(const std::string& data) {
+        initialized = true;
         auto init_ts = get_current_ts_micro();
         auto obj = json::parse(data);
         if (obj["stream"].is_null()) {
