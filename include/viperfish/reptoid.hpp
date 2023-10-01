@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "./market/order.hpp"
+#include "./market/orderbook/order.hpp"
 #include "./json.hpp"
 
 namespace viperfish {
@@ -14,18 +15,23 @@ namespace viperfish {
     namespace market::orderbook::large {
         class Consumer;
     }
+
+     namespace reptoid {
+        class Api;
+     }
 }
 
-namespace viperfish::reptoid {
-    class Api;
+namespace viperfish::reptoid::orderbook {
 
-    class LargeBinanceOrderBookConsumer {
+    class BinanceSpotContext {
     public:
 
-        LargeBinanceOrderBookConsumer(const std::vector<std::string>& symbols = {});
-        virtual ~LargeBinanceOrderBookConsumer();
+        BinanceSpotContext(const std::vector<std::string>& symbols = {});
+        virtual ~BinanceSpotContext();
 
         virtual long double get_top_amount(const std::string&, market::OrderSide, long double);
+        virtual std::vector<market::orderbook::Order> get_bids(const std::string&, int limit = 10);
+        virtual std::vector<market::orderbook::Order> get_asks(const std::string&, int limit = 10);
 
     protected:
         void on_event(const json&);
@@ -34,7 +40,6 @@ namespace viperfish::reptoid {
         binance::BinanceConsumer* create_ob_diff_consumer(const std::vector<std::string>& symbols);
 
         std::vector<std::string> symbols;
-
         market::orderbook::large::Consumer* consumer;
 
         Api* api;

@@ -47,7 +47,6 @@ namespace viperfish::market::orderbook::large {
         std::optional<Snapshots> ob_snapshots;
         std::optional<ObDiffsTail> ob_diffs_tail;
         std::vector<OrderBookDiff> ob_diffs_init_buffer;
-        std::vector<std::function<void()>> on_event_callbacks;
     };
 }
 

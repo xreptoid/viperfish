@@ -60,7 +60,6 @@ namespace viperfish::binance {
             }
             if (settings.consuming_ob_diff_enabled) {
                 streams.push_back(symbol + "@depth" + (settings.ob_diff_ms100 ? "@100ms" : ""));
-                streams.push_back(symbol + "@depth20");  // TODO @100ms??
             }
         }
         ws_client = new network::WsClient(

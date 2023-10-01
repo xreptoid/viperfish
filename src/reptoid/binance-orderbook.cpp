@@ -9,9 +9,9 @@
 #include "market/orderbook/large/consumer.hpp"
 #include "json/getter.hpp"
 
-namespace viperfish::reptoid {
+namespace viperfish::reptoid::orderbook {
 
-    LargeBinanceOrderBookConsumer::LargeBinanceOrderBookConsumer(
+    BinanceSpotContext::BinanceSpotContext(
         const std::vector<std::string>& symbols
     ) 
         : consumer(NULL)
@@ -28,7 +28,7 @@ namespace viperfish::reptoid {
         this->consumer->set_ob_diffs_tail(ob_diffs_tail);
     }
 
-    LargeBinanceOrderBookConsumer::~LargeBinanceOrderBookConsumer() {
+    BinanceSpotContext::~BinanceSpotContext() {
         for (const auto* consumer: this->binance_ob_diff_consumers) {
             delete consumer;
         }
@@ -36,12 +36,26 @@ namespace viperfish::reptoid {
         delete this->api;
     }
 
-    long double LargeBinanceOrderBookConsumer::get_top_amount(
+    long double BinanceSpotContext::get_top_amount(
         const std::string& symbol,
         market::OrderSide side,
         long double price
     ) {
         return consumer->obs_container.get(symbol)->get_top_amount(side, price);
+    }
+
+    std::vector<market::orderbook::Order> BinanceSpotContext::get_bids(
+        const std::string& symbol,
+        int limit
+    ) {
+        return consumer->obs_container.get(symbol)->get_bids(limit);
+    }
+
+    std::vector<market::orderbook::Order> BinanceSpotContext::get_asks(
+        const std::string& symbol,
+        int limit
+    ) {
+        return consumer->obs_container.get(symbol)->get_asks(limit);
     }
 
     std::vector<std::vector<std::string>> get_symbols_batches(const std::vector<std::string>& symbols) {
@@ -59,7 +73,7 @@ namespace viperfish::reptoid {
         return batches;
     }
 
-    void LargeBinanceOrderBookConsumer::run_binance_consumers() {
+    void BinanceSpotContext::run_binance_consumers() {
         if (symbols.empty()) {
             auto ei_data = json::parse(network::http::request_get("https://api.binance.com/api/v3/exchangeInfo").buf);
             auto ei = binance::BinanceExchangeInfo(binance::SPOT, ei_data);
@@ -73,7 +87,7 @@ namespace viperfish::reptoid {
         }
     }
 
-    binance::BinanceConsumer* LargeBinanceOrderBookConsumer::create_ob_diff_consumer(const std::vector<std::string>& symbols) {
+    binance::BinanceConsumer* BinanceSpotContext::create_ob_diff_consumer(const std::vector<std::string>& symbols) {
         auto consumer = new binance::BinanceConsumer(symbols);
         consumer->set_dns_hosts_max_count(1);
         consumer->set_fast_hosts_count(0);
@@ -86,7 +100,7 @@ namespace viperfish::reptoid {
         return consumer;
     }
 
-    void LargeBinanceOrderBookConsumer::on_event(const json& obj) {
+    void BinanceSpotContext::on_event(const json& obj) {
         if (obj.find("data") == obj.end()) {
             return;
         }

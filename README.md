@@ -13,7 +13,7 @@ sudo apt update
 ```
 
 **Install viperfish**
-```bash
+```
 sudo apt install viperfish
 ```
 

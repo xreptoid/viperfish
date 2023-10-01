@@ -92,13 +92,7 @@ namespace viperfish::market::orderbook {
     }
 
     void OrderBook::apply_diff(const OrderBookDiff& diff) {
-        if (!diff.last_id.has_value()) {
-            return;
-        }
         std::lock_guard lock(common_mutex);
-        if (last_diff_id.has_value() && *last_diff_id >= *diff.last_id) {
-            return;
-        }
         apply_diff_body(diff);
         last_diff_id = diff.last_id;
     }
@@ -138,10 +132,12 @@ namespace viperfish::market::orderbook {
     }
 
     std::vector<Order> OrderBook::get_bids(const std::optional<std::size_t>& max_count) const {
+        std::lock_guard lock(common_mutex);
         return OrderBookBase::get_bids(max_count);
     }
 
     std::vector<Order> OrderBook::get_asks(const std::optional<std::size_t>& max_count) const {
+        std::lock_guard lock(common_mutex);
         return OrderBookBase::get_asks(max_count);
     }
 

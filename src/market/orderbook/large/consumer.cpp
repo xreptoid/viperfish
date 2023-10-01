@@ -55,8 +55,5 @@ namespace viperfish::market::orderbook::large {
         }
 
         this->obs_container.put(ob_diff);
-        for (const auto& on_event_callback: on_event_callbacks) {
-            on_event_callback();
-        }
     }
 }
