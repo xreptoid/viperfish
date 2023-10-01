@@ -93,7 +93,7 @@ namespace viperfish::reptoid::orderbook {
         consumer->set_fast_hosts_count(0);
         consumer->settings.consume_tickers(false);
         consumer->settings.consume_trades(false);
-        consumer->settings.consume_ob_diff(true, false); // ob diff without @100ms
+        consumer->settings.consume_ob_diff(true);
         consumer->settings.add_on_event_callback([this](const json& diff) { this->on_event(diff); });
         consumer->run_async();
         consumer->wait_for_initializing();
@@ -105,7 +105,7 @@ namespace viperfish::reptoid::orderbook {
             return;
         }
         auto data = obj["data"];
-        if (!ends_with(json_field_get<std::string>(obj, "stream", ""), "@depth")) {
+        if (!ends_with(json_field_get<std::string>(obj, "stream", ""), "@depth@100ms")) {
             return;
         }
         auto symbol = json_field_get<std::string>(data, "s");
