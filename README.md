@@ -93,3 +93,14 @@ target_link_libraries(
         pthread dl
 )
 ```
+
+```cpp
+#include <iostream>
+#include <viperfish/reptoid.hpp>
+
+int main() {
+    auto context = viperfish::reptoid::orderbook::BinanceSpotContext();
+    std::cout << "Context was initialized" << std::endl;
+    return 0;
+}
+```
