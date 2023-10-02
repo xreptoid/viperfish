@@ -33,6 +33,9 @@ auto total_amount = context.get_top_amount("BTCUSDT", viperfish::market::BUY, bi
 11. Customizing CPU cores.
 12. Latency tracking.
 13. Orderbook snapshots background refetching.
+    
+## Feedback
+Please feel free to create issues and ask questions.
 
 ## Installing
 ### Debian
