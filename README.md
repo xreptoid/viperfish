@@ -3,9 +3,9 @@
 
 Currently, it supports only the full orderbook for the Binance Spot market.
 
-With viperfish, you can consume fully consistent orderbooks in real-time without exceeding Binance REST limits.
+With viperfish, you can consume fully consistent orderbooks in real-time without exceeding Binance REST rate limits.
 
-viperfish initializes orderbooks using data from [Reptoid](https://www.reptoid.com) servers. It consumes orderbook diffs via the default exchange WebSocket API, using `<symbol>@depth@100ms` in the case of Binance.
+viperfish initializes orderbooks using data from [Reptoid](https://www.reptoid.com) servers. It consumes orderbook diffs via the default exchange WebSocket API, using `<symbol>@depth@100ms` in the case of Binance. Currently, it is free, but soon it will require a token for data access.
 
 ## Example
 
@@ -21,6 +21,21 @@ auto asks = context.get_asks("BTCUSDT", 5);
 // For example, if the market price is 29700, calculating for bids from 29700 to 29200:
 auto total_amount = context.get_top_amount("BTCUSDT", viperfish::market::BUY, bids[0].fprice - 500);
 ```
+
+## TODO
+1. Binance USDS-M/COIN-M Futures support.
+2. Trades streams.
+3. Orderbook top realtime streams.
+4. Python/Node.js/Go bindings.
+5. Other exchanges support.
+6. Full orderbook depth (currently it's only 5000 considering to Binance snapshots REST limits).
+7. Fast calculating total depth amount using (persistent) augmented Red-black tree.
+8. Callbacks on orderbooks' changes.
+9. Order execution.
+10. Customizing network interfaces.
+11. Customizing CPU cores.
+12. Latency tracking.
+13. Orderbook snapshots background refetching.
 
 ## Installing
 ### Debian
