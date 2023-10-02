@@ -106,12 +106,12 @@ namespace viperfish::market::orderbook {
             return;
         }
         if (diff.first_update_id > *last_update_id + 1) {
-            throw std::runtime_error(
+            std::cout << (
                 "OrderBook(" + symbol + "): "
                 + "Applying diff with incorrect update id. "
                 + "diff.first_update_id(=" + std::to_string(diff.first_update_id) + ")"
                 + " > (ob.last_update_id= " + std::to_string(*last_update_id) + ") + 1"
-            );
+            ) << std::endl;
         }
         apply_diff_body(diff);
         last_update_id = diff.final_update_id;
@@ -171,14 +171,14 @@ namespace viperfish::market::orderbook {
     }
 
     bool ObsContainer::put(const OrderBookDiff& ob_diff) {
-        auto& ob = *get(ob_diff.symbol);
-        ob.apply_diff(ob_diff);
+        auto* ob = get(ob_diff.symbol);
+        ob->apply_diff(ob_diff);
         return true;
     }
 
     bool ObsContainer::put_snapshot(const OrderBook& ob_snapshot) {
-        auto& ob = *get(ob_snapshot.symbol);
-        ob.apply_snapshot(ob_snapshot);
+        auto* ob = get(ob_snapshot.symbol);
+        ob->apply_snapshot(ob_snapshot);
         return true;
     }
 
