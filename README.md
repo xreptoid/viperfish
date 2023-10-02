@@ -1,12 +1,9 @@
 # viperfish - C++ library for algorithmic trading
-**viperfish** is a library designed for easy access to market data.
+**viperfish** is a library designed for easy access to market data. With viperfish, you can consume fully consistent orderbooks in real-time without exceeding Binance REST rate limits.
 
 Currently, it supports only the full orderbook for the Binance Spot market.
 
-With viperfish, you can consume fully consistent orderbooks in real-time without exceeding Binance REST rate limits.
-
-viperfish initializes orderbooks using data from [Reptoid](https://www.reptoid.com) servers. It consumes orderbook diffs via the default exchange WebSocket API, using `<symbol>@depth@100ms` in the case of Binance. Currently, it is free, but soon it will require a token for data access.
-
+viperfish initializes orderbooks using data from [Reptoid](https://www.reptoid.com) servers. Currently, it is free, but soon it will require a token for data access. It consumes orderbook diffs via the default exchange WebSocket API, using `<symbol>@depth@100ms` in the case of Binance. 
 ## Example
 
 ```cpp
@@ -25,8 +22,8 @@ auto total_amount = context.get_top_amount("BTCUSDT", viperfish::market::BUY, bi
 ## TODO
 1. Binance USDS-M/COIN-M Futures support.
 2. Trades streams.
-3. Orderbook top realtime streams.
-4. Python/Node.js/Go bindings.
+3. Orderbook top real-time streams.
+4. **Python/Node.js/Go** bindings.
 5. Other exchanges support.
 6. Full orderbook depth (currently it's only 5000 considering to Binance snapshots REST limits).
 7. Fast calculating total depth amount using (persistent) augmented Red-black tree.
