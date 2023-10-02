@@ -109,9 +109,8 @@ namespace viperfish::market::orderbook {
             throw std::runtime_error(
                 "OrderBook(" + symbol + "): "
                 + "Applying diff with incorrect update id. "
-                + "first_update_id = " + std::to_string(diff.first_update_id)
-                + ". final_update_id = " + std::to_string(diff.final_update_id)
-                + ". ob last_update_id = " + std::to_string(*last_update_id)
+                + "diff.first_update_id(=" + std::to_string(diff.first_update_id) + ")"
+                + " > (ob.last_update_id= " + std::to_string(*last_update_id) + ") + 1"
             );
         }
         apply_diff_body(diff);
