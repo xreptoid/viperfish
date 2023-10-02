@@ -7,10 +7,15 @@ You can subscribe for whole market orderbooks in realtime without Binance REST l
 
 ```cpp
 auto context = viperfish::reptoid::orderbook::BinanceSpotContext();
-auto bids = context.get_bids("BTCUSDT", 5);
 
-// total bid amount from top to price 29500
-auto total_amount = context.get_top_amount("BTCUSDT", viperfish::market::BUY, 29500);
+// You can retrieve an order book for any Binance Spot symbol immediately after the object is created.
+// Here is an example of getting top 5 bid/ask orders:
+auto bids = context.get_bids("BTCUSDT", 5);
+auto asks = context.get_asks("BTCUSDT", 5);
+
+// Calculate the total amount for bid orders at a specified depth.
+// For example, if the market price is 29700, calculating for bids from 29700 to 29200:
+auto total_amount = context.get_top_amount("BTCUSDT", viperfish::market::BUY, bids[0].fprice - 500);
 ```
 
 ## Installing
