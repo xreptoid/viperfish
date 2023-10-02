@@ -16,7 +16,10 @@ auto asks = context.get_asks("BTCUSDT", 5);
 
 // Calculate the total amount for bid orders at a specified depth.
 // For example, if the market price is 29700, calculating for bids from 29700 to 29200:
-auto total_amount = context.get_top_amount("BTCUSDT", viperfish::market::BUY, bids[0].fprice - 500);
+auto total_amount = context.get_top_amount(
+    "BTCUSDT",
+    viperfish::market::BUY,
+    bids[0].fprice - 500);
 ```
 
 ## TODO
