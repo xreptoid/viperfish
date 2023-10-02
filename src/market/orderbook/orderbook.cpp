@@ -91,6 +91,51 @@ namespace viperfish::market::orderbook {
         side.put(order);
     }
 
+    ObDiffQueue::ObDiffQueue(
+        const std::string& symbol, int max_size
+    )
+        : symbol(symbol)
+        , max_size(max_size)
+    {}
+
+    void ObDiffQueue::track(const OrderBookDiff& diff) {
+        if (q.empty()) {
+            return;
+        }
+        last_update_id = diff.final_update_id;
+    }
+
+    void ObDiffQueue::put(const OrderBookDiff& diff) {
+        auto it = q.begin();
+        while (it != q.end() && it->first_update_id < diff.first_update_id) {
+            ++it;
+        } 
+        if (it != q.end() && it->first_update_id == diff.first_update_id) {
+            return;
+        }
+        if (q.size() >= max_size) {
+            std::cout << "ObDiffQueue(" << diff.symbol << "): queue limit(" << max_size << ") exceeded" << std::endl;
+            return;
+        }
+        q.insert(it, diff);
+    }
+
+    OrderBookDiff* ObDiffQueue::next_diff() {
+        if (q.empty()) {
+            return NULL;
+        }
+        if (q.begin()->first_update_id <= *last_update_id + 1 || q.size() >= max_size) {
+            // assume final_update_id > last_update_id
+            return &(*q.begin());
+        }
+        return NULL;
+    }
+
+    void ObDiffQueue::release(OrderBookDiff* diff_p) {
+        q.pop_front(); // assume diff_p is the first element
+        last_update_id = diff_p->final_update_id;
+    }
+
     void OrderBook::apply_diff(const OrderBookDiff& diff) {
         if (symbol != diff.symbol) {
             throw std::runtime_error(
@@ -105,16 +150,30 @@ namespace viperfish::market::orderbook {
         if (diff.final_update_id <= *last_update_id) {
             return;
         }
-        if (diff.first_update_id > *last_update_id + 1) {
-            std::cout << (
-                "OrderBook(" + symbol + "): "
-                + "Applying diff with incorrect update id. "
-                + "diff.first_update_id(=" + std::to_string(diff.first_update_id) + ")"
-                + " > (ob.last_update_id= " + std::to_string(*last_update_id) + ") + 1"
-            ) << std::endl;
+
+        if (diff.first_update_id <= *last_update_id + 1) {
+            apply_diff_body(diff);
+            last_update_id = diff.final_update_id;
+            diff_queue.track(diff);
+        } else {
+            diff_queue.put(diff);
         }
-        apply_diff_body(diff);
-        last_update_id = diff.final_update_id;
+        OrderBookDiff* diff_p;
+        while ((diff_p = diff_queue.next_diff())) {
+            // inconsistance may be in the case of diff queue limit exceeded
+            if (diff_p->first_update_id > *last_update_id + 1) {
+                std::cout << (
+                    "OrderBook(" + symbol + "): "
+                    + "Applying diff with incorrect update id: "
+                    + "diff.first_update_id(=" + std::to_string(diff_p->first_update_id) + ")"
+                    + " > ob.last_update_id(=" + std::to_string(*last_update_id) + ") + 1"
+                ) << std::endl;
+            }
+
+            apply_diff_body(*diff_p);
+            last_update_id = diff_p->final_update_id;
+            diff_queue.release(diff_p);
+        }
     }
 
     void OrderBook::apply_diff_body(const OrderBookDiff& diff) {

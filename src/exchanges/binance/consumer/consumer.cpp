@@ -249,6 +249,7 @@ namespace viperfish::binance {
             auto host = new_hosts[i];
             auto con = create_connection(i, host, open_orders);
             if (i < connections.size()) {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
                 delete connections[i];
                 connections[i] = con;
             }

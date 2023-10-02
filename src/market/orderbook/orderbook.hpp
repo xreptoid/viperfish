@@ -95,6 +95,24 @@ namespace viperfish::market::orderbook {
             return asks.get_orders(max_count); };
     };
 
+    class OrderBookDiff;
+
+    class ObDiffQueue {
+    public:
+        std::string symbol;
+        int max_size;
+
+        ObDiffQueue(const std::string&, int);
+        void track(const OrderBookDiff&);
+        void put(const OrderBookDiff&);
+        OrderBookDiff* next_diff();
+        void release(OrderBookDiff*);
+
+    protected:
+        std::list<OrderBookDiff> q;
+        std::optional<std::int64_t> last_update_id;
+    };
+
     class OrderBook : public OrderBookBase {
     public:
         std::optional<std::int64_t> last_update_id;
@@ -105,11 +123,13 @@ namespace viperfish::market::orderbook {
         )
                 : OrderBookBase(symbol, true)
                 , last_update_id(last_update_id)
+                , diff_queue(symbol, 20)
         {}
 
         OrderBook(const OrderBook& other)
                 : OrderBookBase(other.symbol, other.bids, other.asks)
                 , last_update_id(other.last_update_id)
+                , diff_queue(other.symbol, other.diff_queue.max_size)
         {}
 
         void apply_diff(const OrderBookDiff&);
@@ -120,6 +140,7 @@ namespace viperfish::market::orderbook {
 
     protected:
         mutable std::mutex common_mutex;
+        ObDiffQueue diff_queue;
 
         void apply_diff_body(const OrderBookDiff&);
     };
