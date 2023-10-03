@@ -1,5 +1,5 @@
 # viperfish - C++ library for algorithmic trading
-**viperfish** is a library designed for easy access to market data. With viperfish, you can consume fully consistent orderbooks in real-time without exceeding Binance REST rate limits.
+**viperfish** is a library designed for easy access to market data. With viperfish, you can consume fully consistent orderbooks without exceeding Binance REST rate limits.
 
 Currently, it supports only Binance Spot market.
 
