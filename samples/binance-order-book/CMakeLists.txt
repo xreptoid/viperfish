@@ -1,4 +1,4 @@
-project(market-data)
+project(binance-order-book)
 cmake_minimum_required(VERSION 3.10)
 
 if(NOT CMAKE_BUILD_TYPE)
