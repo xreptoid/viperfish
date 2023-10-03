@@ -42,19 +42,27 @@ namespace viperfish::reptoid {
 
     market::orderbook::large::Snapshots Api::get_snapshots() {
         std::string resp;
-        try {
-            resp = network::http::request_get(this->snapshots_url).buf;
-        } catch (const std::exception& e) {
-            std::cout << "Error on fetching snapshots meta from server: " << e.what() << std::endl;
-            throw e;
-        }
         std::string result_url;
-        try {
-            result_url = json::parse(resp)["data"]["result-url"].get<std::string>();
-        } catch (const std::exception& e) {
-            std::cout << "Error on getting snapshots url: " << e.what() << std::endl;
-            std::cout << resp << std::endl;
-            throw e;
+        int max_retries = 5;
+        for (int i = 0; i < max_retries && result_url.empty(); ++i) {
+            try {
+                resp = network::http::request_get(this->snapshots_url).buf;
+            } catch (const std::exception& e) {
+                std::cout << "Error on fetching snapshots meta from server: " << e.what() << std::endl;
+                throw e;
+            }
+            try {
+                result_url = json::parse(resp)["data"]["result-url"].get<std::string>();
+            } catch (const std::exception& e) {
+                std::cout << "Error on getting snapshots url: " << e.what() << std::endl;
+                std::cout << resp << std::endl;
+                if (i < max_retries - 1) {
+                    std::cout << "Retry in 1 sec" << std::endl;
+                    sleep(1);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         try {
