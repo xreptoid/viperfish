@@ -30,6 +30,12 @@ namespace viperfish::reptoid {
             std::cout << resp << std::endl;
             throw e;
         }
+        try {
+            auto welcome_msg = json_field_get<std::string>(data["welcome"], "msg");
+            std::cout << "Reptoid API: " << welcome_msg << std::endl;
+        } catch(const std::exception& e) {
+            //
+        }
         this->snapshots_url = json_field_get<std::string>(data, "snapshotsUrl");
         this->ob_diffs_tail_url = json_field_get<std::string>(data, "obDiffsTailUrl");
     }
