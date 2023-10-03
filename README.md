@@ -4,6 +4,9 @@
 Currently, it supports only Binance Spot market.
 
 viperfish initializes orderbooks using data from [Reptoid](https://www.reptoid.com) servers. Currently, it is free, but soon it will require a token for data access. It consumes orderbook diffs via the default exchange WebSocket API, using `<symbol>@depth@100ms` in the case of Binance. 
+
+It takes time to initialize. If you are hosted in AWS ap-northeast-1 (Tokyo) or nearby, initialization could take ~20 seconds. We plan to reduce it to a few seconds soon. In other locations, initialization could take a few minutes due to the downloading of ~20-50MB of data.
+
 ## Example
 
 ```cpp
