@@ -9,7 +9,8 @@ viperfish initializes orderbooks using data from [Reptoid](https://www.reptoid.c
 ```cpp
 auto context = viperfish::reptoid::orderbook::BinanceSpotContext();
 
-// You can retrieve an order book for any Binance Spot symbol immediately after the object is created.
+// You can retrieve an order book for any Binance Spot symbol
+//   immediately after the object is created.
 // Here is an example of getting top 5 bid/ask orders:
 auto bids = context.get_bids("BTCUSDT", 5);
 auto asks = context.get_asks("BTCUSDT", 5);
@@ -21,6 +22,8 @@ auto total_amount = context.get_top_amount(
     viperfish::market::BUY,
     bids[0].fprice - 500);
 ```
+
+[Check another sample](/samples/binance-order-book).
 
 ## TODO
 1. Binance USDS-M/COIN-M Futures support.
