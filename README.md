@@ -1,12 +1,13 @@
 # viperfish - C++ library for algorithmic trading
 **viperfish** is a library designed for easy access to market data. With viperfish, you can consume fully consistent orderbooks in real-time without exceeding Binance REST rate limits.
 
-Currently, it supports only the full orderbook for the Binance Spot market.
+Currently, it supports only Binance Spot market.
 
 viperfish initializes orderbooks using data from [Reptoid](https://www.reptoid.com) servers. Currently, it is free, but soon it will require a token for data access. It consumes orderbook diffs via the default exchange WebSocket API, using `<symbol>@depth@100ms` in the case of Binance. 
 ## Example
 
 ```cpp
+// Consume all symbols from Binance Spot
 auto context = viperfish::reptoid::orderbook::BinanceSpotContext();
 
 // You can retrieve an order book for any Binance Spot symbol
